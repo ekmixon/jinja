@@ -304,9 +304,7 @@ class TestAsyncForLoop:
         )
         assert tmpl.render() == "<>"
 
-    @pytest.mark.parametrize(
-        "transform", [lambda x: x, iter, reversed, lambda x: (i for i in x), auto_aiter]
-    )
+    @pytest.mark.parametrize("transform", [lambda x: x, iter, reversed, lambda x: iter(x), auto_aiter])
     def test_context_vars(self, test_env_async, transform):
         t = test_env_async.from_string(
             "{% for item in seq %}{{ loop.index }}|{{ loop.index0 }}"

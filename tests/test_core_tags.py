@@ -31,7 +31,7 @@ class TestForLoop:
 
     def test_context_vars(self, env):
         slist = [42, 24]
-        for seq in [slist, iter(slist), reversed(slist), (_ for _ in slist)]:
+        for seq in [slist, iter(slist), reversed(slist), iter(slist)]:
             tmpl = env.from_string(
                 """{% for item in seq -%}
             {{ loop.index }}|{{ loop.index0 }}|{{ loop.revindex }}|{{

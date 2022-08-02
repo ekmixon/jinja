@@ -364,8 +364,11 @@ class TestBug:
 
     def test_macro_escaping(self):
         env = Environment(autoescape=lambda x: False)
-        template = "{% macro m() %}<html>{% endmacro %}"
-        template += "{% autoescape true %}{{ m() }}{% endautoescape %}"
+        template = (
+            "{% macro m() %}<html>{% endmacro %}"
+            + "{% autoescape true %}{{ m() }}{% endautoescape %}"
+        )
+
         assert env.from_string(template).render()
 
     def test_macro_scoping(self, env):
@@ -596,11 +599,13 @@ class TestBug:
 
         with pytest.deprecated_call():
 
+
+
+
             class MyContext(Context):
                 def resolve(self, name):
-                    if name == "foo":
-                        return 42
-                    return super().resolve(name)
+                    return 42 if name == "foo" else super().resolve(name)
+
 
         x = MyContext(env, parent={"bar": 23}, name="foo", blocks={})
         assert x._legacy_resolve_mode
@@ -618,7 +623,7 @@ class TestBug:
         from markupsafe import Markup
         from jinja2.runtime import ChainableUndefined
 
-        assert str(Markup(ChainableUndefined())) == ""
+        assert not str(Markup(ChainableUndefined()))
 
     def test_scoped_block_loop_vars(self, env):
         tmpl = env.from_string(

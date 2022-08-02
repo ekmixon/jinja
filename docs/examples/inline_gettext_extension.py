@@ -31,10 +31,12 @@ class InlineGettext(Extension):
             lineno = token.lineno
 
             while True:
-                if not paren_stack:
-                    match = _outside_re.search(token.value, pos)
-                else:
-                    match = _inside_re.search(token.value, pos)
+                match = (
+                    _inside_re.search(token.value, pos)
+                    if paren_stack
+                    else _outside_re.search(token.value, pos)
+                )
+
                 if match is None:
                     break
                 new_pos = match.start()

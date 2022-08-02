@@ -134,9 +134,7 @@ class TestExtendedAPI:
 
     def test_autoescape_autoselect(self, env):
         def select_autoescape(name):
-            if name is None or "." not in name:
-                return False
-            return name.endswith(".html")
+            return False if name is None or "." not in name else name.endswith(".html")
 
         env = Environment(
             autoescape=select_autoescape,
@@ -183,7 +181,7 @@ class TestMeta:
         i = meta.find_referenced_templates(ast)
         assert next(i) == "layout.html"
         assert next(i) is None
-        assert list(i) == []
+        assert not list(i)
 
         ast = env.parse(
             '{% extends "layout.html" %}'
@@ -421,9 +419,13 @@ class TestLowLevel:
         assert tmpl.render() == "bar"
 
     def test_custom_context(self):
+
+
+
         class CustomContext(Context):
             def resolve_or_missing(self, key):
-                return "resolve-" + key
+                return f"resolve-{key}"
+
 
         class CustomEnvironment(Environment):
             context_class = CustomContext

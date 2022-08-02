@@ -19,7 +19,7 @@ def get_characters():
     for cp in range(sys.maxunicode + 1):
         s = chr(cp)
 
-        if ("a" + s).isidentifier() and not re.match(r"\w", s):
+        if f"a{s}".isidentifier() and not re.match(r"\w", s):
             yield s
 
 
@@ -45,8 +45,7 @@ def build_pattern(ranges):
         if a == b:  # single char
             out.append(a)
         elif ord(b) - ord(a) == 1:  # two chars, range is redundant
-            out.append(a)
-            out.append(b)
+            out.extend((a, b))
         else:
             out.append(f"{a}-{b}")
 

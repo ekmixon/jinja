@@ -68,10 +68,7 @@ languages = {
 
 
 def _get_with_context(value, ctx=None):
-    if isinstance(value, dict):
-        return value.get(ctx, value)
-
-    return value
+    return value.get(ctx, value) if isinstance(value, dict) else value
 
 
 @pass_context
@@ -158,7 +155,7 @@ class ExampleExtension(Extension):
                     [
                         nodes.EnvironmentAttribute("sandboxed"),
                         self.attr("ext_attr"),
-                        nodes.ImportedName(__name__ + ".importable_object"),
+                        nodes.ImportedName(f"{__name__}.importable_object"),
                         self.context_reference_node_cls(),
                     ],
                 )
@@ -197,8 +194,7 @@ class StreamFilterExtension(Extension):
             match = _gettext_re.search(token.value, pos)
             if match is None:
                 break
-            value = token.value[pos : match.start()]
-            if value:
+            if value := token.value[pos : match.start()]:
                 yield Token(lineno, "data", value)
             lineno += count_newlines(token.value)
             yield Token(lineno, "variable_begin", None)
@@ -268,7 +264,7 @@ class TestExtensions:
         assert tmpl.render() == "False|42|23|{}|test_content"
 
     def test_identifier(self):
-        assert ExampleExtension.identifier == __name__ + ".ExampleExtension"
+        assert ExampleExtension.identifier == f"{__name__}.ExampleExtension"
 
     def test_rebinding(self):
         original = Environment(extensions=[ExampleExtension])
